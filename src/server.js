@@ -15,12 +15,8 @@ app.use(bodyParser.json());
 app.use(cors())
 
 app.use(express.json());
-app.use(userRouter);
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
+app.use(userRouter); 
+ 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);
 });
