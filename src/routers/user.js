@@ -6,6 +6,7 @@ router.post('/users/register', async (req, res) => {
     const user = new User(req.body)
     try {
         await user.save()
+        // Generate JWT
         res.status(201).send({ user })
     } catch (e) {
         res.status(400).send(e)
@@ -15,17 +16,16 @@ router.post('/users/register', async (req, res) => {
 
 
 router.post('/users/login', async (req, res) => {
-    //  res.send(req.body)
     try {
-        console.log('1')
-        const user = await User.findByCredentials(req.body.email, req.body.password)
-        console.log('2')
-
+        const user = await User.findOne({email: req.body.email, password: req.body.password})
+        // Generate JWT
         res.send({ user })
     } catch (e) {
         res.status(400).send()
     }
 })
+
+
 
 
 

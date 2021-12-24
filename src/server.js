@@ -2,15 +2,16 @@ const express = require('express')
 
 const app = express();
 const PORT = process.env.PORT || 3333;
-require('./db/connection');
 
 const userRouter = require('./routers/user');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
+const cors = require('cors')
+
+require('./db/connection');
 
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
-const cors = require('cors')
 app.use(cors())
 
 app.use(express.json());
