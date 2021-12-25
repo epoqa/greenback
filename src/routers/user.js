@@ -4,19 +4,38 @@ const router = new express.Router()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const auth = require('../middleware/auth')
+require('dotenv').config()
 
 router.post('/users/register', async (req, res) => {
     const user = new User(req.body)
     try {
         await user.save()
         const token = await user.generateAuthToken()
-        res.status(201).send({ user, token })
+        const refreshToken = jwt.sign({_id: user._id}, process.env.JWT_REFRESH_TOKEN , {expiresIn: '365d'})
+
+        res.status(201).send({ user, token, refreshToken })
     } catch (e) {
         res.status(400).send(e)
     }
     
 })
 
+router.post('/renewAccessToken', (req, res) => {
+    const refreshToken = req.body.refreshToken
+    if(!refreshToken) {
+        return res.status(400).send({ error: 'No refresh token' })
+    }
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, async (err, user) => {
+        if(err) {
+            return res.status(401).send({ error: 'Invalid refresh token' })
+        }
+        
+        decoded = jwt.decode(refreshToken)
+        token = jwt.sign({ _id: decoded._id }, process.env.JWT_TOKEN, { expiresIn: '6h' })
+        res.send({refreshToken, token})
+    }   
+
+)})
 router.get('/allusers', auth, async(req,res) => {
     try {
         const userInfo = await User.find({})
@@ -59,9 +78,10 @@ router.post('/users/login', async (req, res) => {
         if(!isMatch) {
             return res.status(400).send({error: 'Invalid password'})
         }
+        const refreshToken = jwt.sign({_id: user._id}, process.env.JWT_REFRESH_TOKEN , {expiresIn: '365d'})
         const token = await user.generateAuthToken()
         
-        res.send({ user, token })
+        res.send({ user, token, refreshToken })
     } catch (e) {
         res.status(400).send()
     }

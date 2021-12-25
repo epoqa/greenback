@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-
-const uri =
-  'mongodb+srv://GreenDiaryAdmin:GreenEpoqa@greendiary.9qqda.mongodb.net/GreenDatabase?retryWrites=true&w=majority';
+require('dotenv').config()
+const uri = process.env.MONGODB_URI;
 
 mongoose.connect(
   uri,

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+require('dotenv').config()
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this;
-    const token = jwt.sign({ _id: user._id.toString() }, 'signiture');
+    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_TOKEN, { expiresIn: '6h' });
 
     return token;    
 }
