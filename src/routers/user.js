@@ -17,7 +17,9 @@ router.post('/users/register', async (req, res) => {
         const token = await user.generateAuthToken()
         const refreshToken = jwt.sign({_id: user._id}, process.env.JWT_REFRESH_TOKEN , {expiresIn: '365d'})
         refreshTokens.push(refreshToken)
+        console.log(refreshTokens, 'register')
         res.status(201).send({ user, token, refreshToken })
+
     } catch (e) {
         res.status(400).send(e)
     }
@@ -28,6 +30,7 @@ router.post('/users/logout', async (req, res) => {
     try {
         const refreshToken = req.body.refreshToken;
         removeItemOnce(refreshTokens, refreshToken);
+        console.log(refreshTokens, 'logout')
         res.send({message: 'Logged out'})
     } catch (e) {
         res.status(400).send()
