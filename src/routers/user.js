@@ -51,8 +51,7 @@ router.post('/users/login', async (req, res) => {
     try {
 
         const user = await User.findOne({email: req.body.email});
-        const token = await user.generateAuthToken()
-        
+
         if(!user) {
             return res.status(400).send({error: 'User with that email does not exist'})
         }
@@ -60,6 +59,7 @@ router.post('/users/login', async (req, res) => {
         if(!isMatch) {
             return res.status(400).send({error: 'Invalid password'})
         }
+        const token = await user.generateAuthToken()
         
         res.send({ user, token })
     } catch (e) {
