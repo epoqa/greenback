@@ -5,7 +5,11 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const auth = require('../middleware/auth')
 require('dotenv').config()
+
+
 let refreshTokens = []
+
+
 router.post('/users/register', async (req, res) => {
     const user = new User(req.body)
     try {
@@ -30,7 +34,7 @@ router.post('/users/logout', async (req, res) => {
     }
 })
 
-router.post('/users/login', async (req, res) => {
+router.delete('/users/login', async (req, res) => {
     try {
 
         const user = await User.findOne({email: req.body.email});
@@ -74,7 +78,7 @@ router.post('/renewAccessToken', (req, res) => {
 )})
 
 
-router.get('/allusers', auth, async(req,res) => {
+router.get('/users/all', auth, async(req,res) => {
     try {
         const userInfo = await User.find({})
         res.send(userInfo)
