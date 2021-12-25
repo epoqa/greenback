@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const auth = require('../middleware/auth')
 require('dotenv').config()
-
+const {generateAuthToken, removeItemOnce} = require('../services/services')
 
 let refreshTokens = []
 
@@ -13,11 +13,18 @@ let refreshTokens = []
 router.post('/users/register', async (req, res) => {
     const user = new User(req.body)
     try {
+        let existWithEmail = await User.findOne({email: req.body.email})
+        if(existWithEmail) { 
+            return res.status(400).send({error: 'Email already exists'})
+        }
+        let existWithUsername = await User.findOne({username: req.body.username})
+        if(existWithUsername) {
+            return res.status(400).send({error: 'Username already exists'})
+        }
         await user.save()
-        const token = await user.generateAuthToken()
+        const token = await generateAuthToken(user._id)
         const refreshToken = jwt.sign({_id: user._id}, process.env.JWT_REFRESH_TOKEN , {expiresIn: '365d'})
         refreshTokens.push(refreshToken)
-        console.log(refreshTokens, 'register')
         res.status(201).send({ user, token, refreshToken })
 
     } catch (e) {
@@ -26,18 +33,17 @@ router.post('/users/register', async (req, res) => {
     
 })
 
-router.post('/users/logout', async (req, res) => {
+router.delete('/users/logout', async (req, res) => {
     try {
         const refreshToken = req.body.refreshToken;
         removeItemOnce(refreshTokens, refreshToken);
-        console.log(refreshTokens, 'logout')
         res.send({message: 'Logged out'})
     } catch (e) {
         res.status(400).send()
     }
 })
 
-router.delete('/users/login', async (req, res) => {
+router.post('/users/login', async (req, res) => {
     try {
 
         const user = await User.findOne({email: req.body.email});
@@ -51,7 +57,7 @@ router.delete('/users/login', async (req, res) => {
         }
         const refreshToken = jwt.sign({_id: user._id}, process.env.JWT_REFRESH_TOKEN , {expiresIn: '365d'})
         refreshTokens.push(refreshToken)
-        const token = await user.generateAuthToken()
+        const token = await generateAuthToken(user._id)
         
         res.send({ user, token, refreshToken })
     } catch (e) {
@@ -74,7 +80,7 @@ router.post('/renewAccessToken', (req, res) => {
             return res.status(401).send({ error: 'Refresh Token Is Invalid'})
         }
         decoded = jwt.decode(refreshToken)
-        token = jwt.sign({ _id: decoded._id }, process.env.JWT_TOKEN, { expiresIn: '6h' })
+        token = await generateAuthToken(decoded._id)
         res.send({refreshToken, token})
     }   
 
@@ -109,13 +115,6 @@ router.get('/users/:id', async (req, res) => {
 
 })
 
-function removeItemOnce(arr, value) {
-    let index = arr.indexOf(value);
-    if (index > -1) {
-      arr.splice(index, 1);
-    }
-    refreshTokens = arr;
-}
 
 
 
