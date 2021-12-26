@@ -54,7 +54,7 @@ router.post('/users/login', async (req, res) => {
         const isMatch = await bcrypt.compare(req.body.password, user.password);
         if(!isMatch) {
             return res.status(400).send({error: 'Invalid password'})
-        }
+        } 
         const refreshToken = jwt.sign({_id: user._id}, process.env.JWT_REFRESH_TOKEN , {expiresIn: '365d'})
         refreshTokens.push(refreshToken)
         const token = await generateAuthToken(user._id)
@@ -62,6 +62,26 @@ router.post('/users/login', async (req, res) => {
         res.send({ user, token, refreshToken })
     } catch (e) {
         res.status(400).send()
+    }
+})
+
+router.put('/users/update', auth, async (req, res) => {
+    let existWithEmail = await User.findOne({email: req.body.email})
+    if(existWithEmail) { 
+        return res.status(400).send({error: 'Email already exists'})
+    }
+    let existWithUsername = await User.findOne({username: req.body.username})
+    if(existWithUsername) {
+        return res.status(400).send({error: 'Username already exists'})
+    }
+    if(req.body.password) { 
+        req.body.password = await bcrypt.hash(req.body.password, 8)
+    }
+    try {
+        const user = await User.findByIdAndUpdate(req.user._id, req.body, {new: true, runValidators: true})
+        res.send(user)
+    } catch (e) {
+        res.status(400).send(e)
     }
 })
 
@@ -86,7 +106,6 @@ router.post('/renewAccessToken', (req, res) => {
 
 )})
 
-
 router.get('/users/all', auth, async(req,res) => {
     try {
         const userInfo = await User.find({})
@@ -101,10 +120,10 @@ router.get('/users/me', auth, async(req,res) => {
     res.send(req.user)
 })
 
-router.get('/users/:id', async (req, res) => {
-    const _id = req.params.id
+router.get('/users/:username', async (req, res) => {
+    const username = req.params.username
     try {
-        const user = await User.findById(_id)
+        const user = await User.findOne({username})
         if (!user) {
             return res.status(404).send("user doesn't exist")
         }

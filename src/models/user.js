@@ -32,7 +32,11 @@ const userSchema = new mongoose.Schema({
                 throw new Error('Password cannot contain "password"')
             }
         }
-    }
+    },
+   createdAt: {
+   type: Date, 
+   default: Date.now
+}
 
 });
 
