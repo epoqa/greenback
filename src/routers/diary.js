@@ -39,6 +39,18 @@ router.get('/diary/:id', async (req, res) => {
     }
 })
 
+router.get('/diary/:username', async (req, res) => {
+    try {
+        const diary = await Diary.find({owner: req.params.username})
+        if (!diary) {
+            return res.status(404).send()
+        }
+        res.send(diary)
+    } catch (e) {
+        res.status(500).send(e)
+    }
+})
+
 router.get('/diary/all', async (req, res) => {
     try {
         const diaries = await Diary.find({})
