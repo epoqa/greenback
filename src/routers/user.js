@@ -15,11 +15,11 @@ router.post('/users/register', async (req, res) => {
     try {
         let existWithEmail = await User.findOne({email: req.body.email})
         if(existWithEmail) { 
-            return res.status(400).send({error: 'Email already exists'})
+            return res.status(400).send({error: 'ასეთი ემაილი უკვე არსებობს'})
         }
         let existWithUsername = await User.findOne({username: req.body.username.toLowerCase()})
         if(existWithUsername) {
-            return res.status(400).send({error: 'Username already exists'})
+            return res.status(400).send({error: 'ასეთი მომხმარებელი უკვე არსებობს'})
         }
         await user.save()
         res.status(201).send({ user})
@@ -34,7 +34,7 @@ router.delete('/users/logout', async (req, res) => {
     try {
         const refreshToken = req.body.refreshToken;
         removeItemOnce(refreshTokens, refreshToken);
-        res.send({message: 'Logged out'})
+        res.send({message: 'წარმატებით გამოვიდა'})
     } catch (e) {
         res.status(400).send()
     }
@@ -46,11 +46,11 @@ router.post('/users/login', async (req, res) => {
         const user = await User.findOne({email: req.body.email});
 
         if(!user) {
-            return res.status(400).send({error: 'User with that email does not exist'})
+            return res.status(400).send({error: 'ემაილი არასწორია'})
         }
         const isMatch = await bcrypt.compare(req.body.password, user.password);
         if(!isMatch) {
-            return res.status(400).send({error: 'Invalid password'})
+            return res.status(400).send({error: 'პაროლი არასწორია'})
         } 
         const refreshToken = jwt.sign({_id: user._id}, process.env.JWT_REFRESH_TOKEN , {expiresIn: '365d'})
         refreshTokens.push(refreshToken)
@@ -66,11 +66,11 @@ router.put('/users/update', auth, async (req, res) => {
     req.body.username = req.body.username.toLowerCase()
     let existWithEmail = await User.findOne({email: req.body.email})
     if(existWithEmail) { 
-        return res.status(400).send({error: 'Email already exists'})
+        return res.status(400).send({error: 'ასეთი ემაილი უკვე არსებობს'})
     }
     let existWithUsername = await User.findOne({username: req.body.username.toLowerCase()})
     if(existWithUsername) {
-        return res.status(400).send({error: 'Username already exists'})
+        return res.status(400).send({error: 'მომხმარებელი უკვე არსებობს'})
     }
     if(req.body.password) { 
         req.body.password = await bcrypt.hash(req.body.password, 8)

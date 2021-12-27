@@ -42,6 +42,7 @@ router.get('/diary/id/:id', async (req, res) => {
 router.get('/diary/user/:username', async (req, res) => {
 
     try {
+        console.log(req.params.username)
         const diary = await Diary.find({owner: req.params.username.toLowerCase()})
         if (!diary) {
             return res.status(404).send()
