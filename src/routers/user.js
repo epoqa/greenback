@@ -17,15 +17,12 @@ router.post('/users/register', async (req, res) => {
         if(existWithEmail) { 
             return res.status(400).send({error: 'Email already exists'})
         }
-        let existWithUsername = await User.findOne({username: req.body.username})
+        let existWithUsername = await User.findOne({username: req.body.username.toLowerCase()})
         if(existWithUsername) {
             return res.status(400).send({error: 'Username already exists'})
         }
         await user.save()
-        const token = await generateAuthToken(user._id)
-        const refreshToken = jwt.sign({_id: user._id}, process.env.JWT_REFRESH_TOKEN , {expiresIn: '365d'})
-        refreshTokens.push(refreshToken)
-        res.status(201).send({ user, token, refreshToken })
+        res.status(201).send({ user})
 
     } catch (e) {
         res.status(400).send(e)
@@ -66,11 +63,12 @@ router.post('/users/login', async (req, res) => {
 })
 
 router.put('/users/update', auth, async (req, res) => {
+    req.body.username = req.body.username.toLowerCase()
     let existWithEmail = await User.findOne({email: req.body.email})
     if(existWithEmail) { 
         return res.status(400).send({error: 'Email already exists'})
     }
-    let existWithUsername = await User.findOne({username: req.body.username})
+    let existWithUsername = await User.findOne({username: req.body.username.toLowerCase()})
     if(existWithUsername) {
         return res.status(400).send({error: 'Username already exists'})
     }
@@ -106,7 +104,7 @@ router.post('/renewAccessToken', (req, res) => {
 
 )})
 
-router.get('/users/all', auth, async(req,res) => {
+router.get('/users/all', async(req,res) => {
     try {
         const userInfo = await User.find({})
         res.send(userInfo)
@@ -121,7 +119,8 @@ router.get('/users/me', auth, async(req,res) => {
 })
 
 router.get('/users/:username', async (req, res) => {
-    const username = req.params.username
+    const username = req.params.username.toLowerCase()
+
     try {
         const user = await User.findOne({username})
         if (!user) {

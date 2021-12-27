@@ -7,7 +7,7 @@ const auth = require('../middleware/auth')
 
 router.post('/diary/create', auth, async (req, res) => {
     try {
-        const diary = new Diary({owner: req.user.username, ...req.body})
+        const diary = new Diary({owner: req.user.username.toLowerCase(), ...req.body})
         await diary.save()
         res.send(diary)
     } catch (e) {
@@ -16,7 +16,7 @@ router.post('/diary/create', auth, async (req, res) => {
 })
 
 router.delete('diary/delete/:id', auth, async (req, res) => { 
-    if(req.user.username!==req.body.owner) {
+    if(req.user.username.toLowerCase() !== req.body.owner.toLowerCase() ) {
         return res.status(400).send({error: 'You are not the owner of this diary'})
     }
     try {
@@ -27,7 +27,7 @@ router.delete('diary/delete/:id', auth, async (req, res) => {
     }
 })
 
-router.get('/diary/:id', async (req, res) => {
+router.get('/diary/id/:id', async (req, res) => {
     try {
         const diary = await Diary.findById(req.params.id)
         if (!diary) {
@@ -39,9 +39,10 @@ router.get('/diary/:id', async (req, res) => {
     }
 })
 
-router.get('/diary/:username', async (req, res) => {
+router.get('/diary/user/:username', async (req, res) => {
+
     try {
-        const diary = await Diary.find({owner: req.params.username})
+        const diary = await Diary.find({owner: req.params.username.toLowerCase()})
         if (!diary) {
             return res.status(404).send()
         }
@@ -62,16 +63,7 @@ router.get('/diary/all', async (req, res) => {
 
 router.get('/diary/mine', auth, async (req, res) => {    
     try {
-        const diaries = await Diary.find({owner: req.user.username})
-        res.send(diaries)
-    } catch (e) {
-        res.status(500).send(e)
-    }
-})
-
-router.get('/diary/:owner', async (req, res) => {
-    try {
-        const diaries = await Diary.find({owner: req.params.owner})
+        const diaries = await Diary.find({owner: req.user.username.toLowerCase()})
         res.send(diaries)
     } catch (e) {
         res.status(500).send(e)
@@ -79,7 +71,7 @@ router.get('/diary/:owner', async (req, res) => {
 })
 
 router.put('/diary/update/:id', auth, async (req, res) => {
-    if(req.user.username !== req.body.owner) {
+    if(req.user.username.toLowerCase() !== req.body.owner.toLowerCase()) {
         return res.status(401).send({ error: 'You are not authorized to update this diary' 
     })}
         
@@ -106,8 +98,8 @@ router.put('/diary/update/:id', auth, async (req, res) => {
     }
 })
 
-router.put('/diary/picture', auth, async (req, res) => {
-    if(req.user.username !== req.body.owner) {
+router.put('/diary/picture/:id', auth, async (req, res) => {
+    if(req.user.username.toLowerCase() !== req.body.owner.toLowerCase()) {
         return res.status(401).send({ error: 'You are not authorized to update this diary' 
     })}
 
@@ -142,6 +134,5 @@ router.put('/diary/comment/:id', auth, async (req, res) => {
         res.status(400).send(e)
     }
 })
-
 
 module.exports = router

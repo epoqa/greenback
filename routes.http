@@ -1,0 +1,37 @@
+POST http://127.0.0.1:3333/users/register HTTP/1.1
+content-type: application/json
+
+{
+    "username": "test",
+    "email": "test@gmail.com",
+    "password": "testtest"
+}
+
+###
+
+POST http://127.0.0.1:3333/users/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "TEST@gmail.com",
+    "password": "testtest"
+}
+
+###
+
+PUT http://127.0.0.1:3333/users/update HTTP/1.1
+content-type: application/json
+
+{
+    "email": "TEST@gmail.com",
+    "password": "testtest",
+    "username": "test"
+}
+
+###
+
+GET  http://127.0.0.1:3333/diary/all HTTP/1.1
+content-type: application/json
+
+
+###

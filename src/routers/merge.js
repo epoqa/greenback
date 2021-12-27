@@ -2,7 +2,7 @@ const express = require('express')
 const User = require('../models/user')
 const Diary = require('../models/diary')
 const router = new express.Router()
-
+const auth = require('../middleware/auth')
 
 
 router.get('usersanddiaries/:username ', async (req, res) => {
