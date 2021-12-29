@@ -11,6 +11,7 @@ let refreshTokens = []
 
 
 router.post('/users/register', async (req, res) => {
+    req.body.username = req.body.username.toLowerCase();
     const user = new User(req.body)
     try {
         let existWithEmail = await User.findOne({email: req.body.email})

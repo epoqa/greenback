@@ -36,9 +36,7 @@ const Diary = mongoose.model('Diary', {
     ],
     comments:  [
         {
-            owner: {
-                username: String,
-            },
+            owner: String,
             comment: String,         
             createdAt: {
                 type: Date,
