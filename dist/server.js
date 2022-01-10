@@ -1,15 +1,20 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const app = express_1.default();
+const express = require('express');
+const app = express();
 const PORT = process.env.PORT || 3333;
-app.get('/', (req, res, next) => {
-    res.send('Hello World!');
-});
-console.log('asf');
+const userRouter = require('./routers/user');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const diaryRouter = require('./routers/diary');
+const mergeRouter = require('./routers/merge');
+require('./db/connection');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cors());
+app.use(express.json());
+app.use(userRouter);
+app.use(diaryRouter);
+app.use(mergeRouter);
 app.listen(PORT, () => {
     console.log(`http://localhost:${PORT}`);
 });
