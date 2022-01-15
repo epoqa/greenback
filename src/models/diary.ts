@@ -45,4 +45,5 @@ const Diary = mongoose.model('Diary', {
     },
   ],
 });
-module.exports = Diary;
+
+export = Diary;

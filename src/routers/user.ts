@@ -1,16 +1,24 @@
-const express = require('express');
-const User = require('../models/user');
+import express, { Application, Request, Response, NextFunction, Router } from 'express';
 
-const router = new express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const auth = require('../middleware/auth');
-require('dotenv').config();
-const { generateAuthToken, removeItemOnce } = require('../services/services');
+import User from '../models/user';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import auth from '../middleware/auth';
+import * as dotenv from 'dotenv';
+import { userInterface } from '../types/userInterface';
 
-const refreshTokens = [];
+interface JwtPayload {
+  _id: any
+}
 
-router.post('/users/register', async (req, res) => {
+const router = Router();
+dotenv.config();
+
+import { generateAuthToken, removeItemOnce } from '../services/services';
+
+const refreshTokens: string[] = [];
+
+router.post('/users/register', async (req: Request, res: Response) => {
   req.body.username = req.body.username.toLowerCase();
   const user = new User(req.body);
   try {
@@ -33,7 +41,7 @@ router.post('/users/register', async (req, res) => {
   }
 });
 
-router.delete('/users/logout', async (req, res) => {
+router.delete('/users/logout', async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.body;
     removeItemOnce(refreshTokens, refreshToken);
@@ -43,7 +51,7 @@ router.delete('/users/logout', async (req, res) => {
   }
 });
 
-router.post('/users/login', async (req, res) => {
+router.post('/users/login', async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ email: req.body.email });
 
@@ -68,7 +76,7 @@ router.post('/users/login', async (req, res) => {
   }
 });
 
-router.put('/users/update', auth, async (req, res) => {
+router.put('/users/update', auth, async (req: Request, res: Response) => {
   req.body.username = req.body.username.toLowerCase();
   const existWithEmail = await User.findOne({ email: req.body.email });
   if (existWithEmail) {
@@ -94,12 +102,12 @@ router.put('/users/update', auth, async (req, res) => {
   }
 });
 
-router.post('/renewAccessToken', (req, res) => {
+router.post('/renewAccessToken', (req: Request, res: Response) => {
   const { refreshToken } = req.body;
   if (!refreshToken) {
     return res.status(400).send({ error: 'No refresh token' });
   }
-  jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, async (err, user) => {
+  jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, async (err: any , user: object) => {
     if (err) {
       return res.status(401).send({ error: 'Refresh Token Is Expired' });
     }
@@ -108,13 +116,17 @@ router.post('/renewAccessToken', (req, res) => {
     if (!HasRefreshToken) {
       return res.status(401).send({ error: 'Refresh Token Is Invalid' });
     }
-    decoded = jwt.decode(refreshToken);
-    token = await generateAuthToken(decoded._id);
+    const decoded: JwtPayload = jwt.decode(refreshToken);
+    if( !decoded ){
+      return res.status(401).send({ error: 'Refresh Token Is Invalid' });
+    }
+    const userId = decoded._id;
+    const token = await generateAuthToken(userId);
     res.send({ refreshToken, token });
   });
 });
 
-router.get('/users/all', async (req, res) => {
+router.get('/users/all', async (req: Request, res: Response) => {
   try {
     const userInfo = await User.find({});
     res.send(userInfo);
@@ -123,11 +135,11 @@ router.get('/users/all', async (req, res) => {
   }
 });
 
-router.get('/users/me', auth, async (req, res) => {
+router.get('/users/me', auth, async (req: Request, res: Response) => {
   res.send(req.user);
 });
 
-router.get('/users/:username', async (req, res) => {
+router.get('/users/:username', async (req: Request, res: Response) => {
   const username = req.params.username.toLowerCase();
 
   try {

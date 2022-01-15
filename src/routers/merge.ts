@@ -1,11 +1,12 @@
-const express = require('express')
-const User = require('../models/user')
-const Diary = require('../models/diary')
-const router = new express.Router()
-const auth = require('../middleware/auth')
+import express, { Application, Request, Response, NextFunction, Router } from 'express';
+import User from '../models/user';
+import Diary from '../models/diary';
+import auth from '../middleware/auth';
+
+const router = Router();
 
 
-router.get('usersanddiaries/:username ', async (req, res) => {
+router.get('usersanddiaries/:username ', async (req: Request, res: Response) => {
     try {   
         const user = await User.findOne({username: req.params.username})
         const diary = await Diary.find({user: user._id})
@@ -16,7 +17,7 @@ router.get('usersanddiaries/:username ', async (req, res) => {
     }
 })
 
-router.get('/meandmine', auth, (req, res) => {
+router.get('/meandmine', auth, (req: Request, res: Response) => {
     User.findOne({username: req.user.username})
     .then(user => {
         Diary.find({owner: req.user.username})

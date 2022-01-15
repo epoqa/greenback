@@ -1,13 +1,15 @@
-"use strict";
-const express = require('express');
+import express from 'express';
+// Routers
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import { diaryRouter } from './routers/diary';
+import { userRouter } from './routers/user';
+import { mergeRouter } from './routers/merge';
+// Modules
+import './db/connection';
 const app = express();
 const PORT = process.env.PORT || 3333;
-const userRouter = require('./routers/user');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const diaryRouter = require('./routers/diary');
-const mergeRouter = require('./routers/merge');
-require('./db/connection');
+// Middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
