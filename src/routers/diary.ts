@@ -136,4 +136,4 @@ router.put('/diary/comment/:id', auth, async (req, res) => {
     }
 })
 
-module.exports = router
+export { router as diaryRouter };

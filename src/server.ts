@@ -1,11 +1,11 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application } from 'express';
 
 // Routers
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import userRouter from './routers/user';
-import mergeRouter from './routers/merge';
 import { diaryRouter } from './routers/diary';
+import { userRouter } from './routers/user';
+import { mergeRouter } from './routers/merge';
 
 // Modules
 import './db/connection';

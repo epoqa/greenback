@@ -141,4 +141,4 @@ router.get('/users/:username', async (req, res) => {
   }
 });
 
-export { router: function as userRouter };
+export { router as userRouter };

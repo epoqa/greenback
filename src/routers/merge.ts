@@ -30,4 +30,4 @@ router.get('/meandmine', auth, (req, res) => {
 
 
 
-module.exports = router
+export { router as mergeRouter };
