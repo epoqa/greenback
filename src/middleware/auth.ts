@@ -10,7 +10,7 @@ const auth = async (req: userInterface, res: Response, next: NextFunction) => {
     if(req.header('Authorization')) {
       let token: string | undefined | object = req.header('Authorization')
       if(token) {
-        token = token.replace('Bearer ', '')
+        token = token.replace('Bearer', '')
         const decoded = jwt.verify(token, process.env.JWT_TOKEN);
         const user = await User.findById(decoded._id);
     
