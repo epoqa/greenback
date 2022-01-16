@@ -29,4 +29,4 @@ const auth = async (req: userInterface, res: Response, next: NextFunction) => {
   }
 };
 
-export = auth;
+export default auth;

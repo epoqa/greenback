@@ -1,6 +1,6 @@
 import express, { Application, Request, Response, NextFunction, Router } from 'express';
 const router = Router();
-import { userInterface } from '../types/userInterface';
+import { userInterface } from  '../types/userInterface';
 import Diary from '../models/diary'
 import User from '../models/user'
 import auth from '../middleware/auth'
