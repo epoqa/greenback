@@ -1,3 +1,4 @@
+"use strict";
 const mongoose = require('mongoose');
 const Diary = mongoose.model('Diary', {
     diaryName: {
@@ -44,4 +45,4 @@ const Diary = mongoose.model('Diary', {
         },
     ],
 });
-export {};
+module.exports = Diary;

@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -7,28 +8,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import express from 'express';
-const User = require('../models/user');
-const Diary = require('../models/diary');
-const router = new express.Router();
-const auth = require('../middleware/auth');
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mergeRouter = void 0;
+const express_1 = require("express");
+const user_1 = __importDefault(require("../models/user"));
+const diary_1 = __importDefault(require("../models/diary"));
+const auth_1 = __importDefault(require("../middleware/auth"));
+const router = (0, express_1.Router)();
+exports.mergeRouter = router;
 router.get('usersanddiaries/:username ', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield User.findOne({ username: req.params.username });
-        const diary = yield Diary.find({ user: user._id });
+        const user = yield user_1.default.findOne({ username: req.params.username });
+        const diary = yield diary_1.default.find({ user: user._id });
         res.send({ user, diary });
     }
     catch (e) {
         res.status(500).send(e);
     }
 }));
-router.get('/meandmine', auth, (req, res) => {
-    User.findOne({ username: req.user.username })
-        .then(user => {
-        Diary.find({ owner: req.user.username })
-            .then(diary => {
+router.get('/meandmine', auth_1.default, (req, res) => {
+    user_1.default.findOne({ username: req.user.username })
+        .then((user) => {
+        diary_1.default.find({ owner: req.user.username })
+            .then((diary) => {
             res.send({ user, diary });
         });
     });
 });
-export { router as mergeRouter };

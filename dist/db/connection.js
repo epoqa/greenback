@@ -1,8 +1,12 @@
 "use strict";
-const mongoose = require("mongoose");
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
 require("dotenv").config();
 const uri = process.env.MONGODB_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+mongoose_1.default.connect(`${uri}`, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
     if (err) {
         console.log(`Error connecting to the database. ${err}`);
     }

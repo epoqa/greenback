@@ -8,7 +8,7 @@ import { userInterface } from '../types/userInterface';
 const auth = async (req: userInterface, res: Response, next: NextFunction) => {
   try {
     if(req.header('Authorization')) {
-      let token: string | undefined | object = req.header('Authorization')
+      let token: any = req.header('Authorization')
       if(token) {
         token = token.replace('Bearer', '')
         const decoded = jwt.verify(token, process.env.JWT_TOKEN);

@@ -8,6 +8,7 @@ export interface userInterface extends Request {
         createdAt: Date,
         updatedAt: Date
         
-    },
-    token: string
+    }
+    token: string | undefined | object
+    header: any
 }
