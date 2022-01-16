@@ -1,11 +1,11 @@
-const express = require('express')
+import express, { Application, Request, Response, NextFunction, Router } from 'express';
+const router = Router();
+import { userInterface } from '../types/userInterface';
+import Diary from '../models/diary'
+import User from '../models/user'
+import auth from '../middleware/auth'
 
-const router = new express.Router()
-const Diary = require('../models/diary')
-const User = require('../models/user')
-const auth = require('../middleware/auth')
-
-router.post('/diary/create', auth, async (req, res) => {
+router.post('/diary/create', auth, async (req: userInterface , res: Response) => {
     try {
         const diary = new Diary({owner: req.user.username.toLowerCase(), ...req.body})
         await diary.save()
@@ -15,7 +15,7 @@ router.post('/diary/create', auth, async (req, res) => {
     }
 })
 
-router.delete('diary/delete/:id', auth, async (req, res) => { 
+router.delete('diary/delete/:id', auth, async (req: userInterface , res: Response) => { 
     if(req.user.username.toLowerCase() !== req.body.owner.toLowerCase() ) {
         return res.status(400).send({error: 'You are not the owner of this diary'})
     }
@@ -27,7 +27,7 @@ router.delete('diary/delete/:id', auth, async (req, res) => {
     }
 })
 
-router.get('/diary/id/:id', async (req, res) => {
+router.get('/diary/id/:id', async (req: Request , res: Response) => {
     try {
         const diary = await Diary.findById(req.params.id)
         if (!diary) {
@@ -39,7 +39,7 @@ router.get('/diary/id/:id', async (req, res) => {
     }
 })
 
-router.get('/diary/user/:username', async (req, res) => {
+router.get('/diary/user/:username', async (req: Request , res: Response) => {
 
     try {
         console.log(req.params.username)
@@ -53,7 +53,7 @@ router.get('/diary/user/:username', async (req, res) => {
     }
 })
 
-router.get('/diary/all', async (req, res) => {
+router.get('/diary/all', async (req: Request , res: Response) => {
     try {
         const diaries = await Diary.find({})
         res.send(diaries)
@@ -62,7 +62,7 @@ router.get('/diary/all', async (req, res) => {
     }
 })
 
-router.get('/diary/mine', auth, async (req, res) => {    
+router.get('/diary/mine', auth, async (req: userInterface , res: Response) => {    
     try {
         const diaries = await Diary.find({owner: req.user.username.toLowerCase()})
         res.send(diaries)
@@ -71,7 +71,7 @@ router.get('/diary/mine', auth, async (req, res) => {
     }
 })
 
-router.put('/diary/update/:id', auth, async (req, res) => {
+router.put('/diary/update/:id', auth, async (req: userInterface , res: Response) => {
     if(req.user.username.toLowerCase() !== req.body.owner.toLowerCase()) {
         return res.status(401).send({ error: 'You are not authorized to update this diary' 
     })}
@@ -99,7 +99,7 @@ router.put('/diary/update/:id', auth, async (req, res) => {
     }
 })
 
-router.put('/diary/picture/:id', auth, async (req, res) => {
+router.put('/diary/picture/:id', auth, async (req: userInterface , res: Response) => {
     if(req.user.username.toLowerCase() !== req.body.owner.toLowerCase()) {
         return res.status(401).send({ error: 'You are not authorized to update this diary' 
     })}
@@ -121,7 +121,7 @@ router.put('/diary/picture/:id', auth, async (req, res) => {
 
 })
 
-router.put('/diary/comment/:id', auth, async (req, res) => { 
+router.put('/diary/comment/:id', auth, async (req: userInterface , res: Response) => { 
     try {
         const diary = await Diary.findById(req.params.id)
         if (!diary) {

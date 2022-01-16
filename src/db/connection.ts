@@ -1,10 +1,9 @@
-const mongoose = require("mongoose");
+import mongoose, { ConnectOptions } from "mongoose";
 require("dotenv").config();
-const uri = process.env.MONGODB_URI;
+const uri: any = process.env.MONGODB_URI;
 mongoose.connect(
-  uri,
-  { useNewUrlParser: true, useUnifiedTopology: true },
-  (err) => {
+  `${uri}`, { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions,
+  (err: any) => {
     if (err) {
       console.log(`Error connecting to the database. ${err}`);
     } else {

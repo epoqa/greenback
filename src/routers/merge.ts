@@ -4,6 +4,8 @@ import Diary from '../models/diary';
 import auth from '../middleware/auth';
 
 const router = Router();
+import { userInterface } from '../types/userInterface';
+import { ToObjectOptions } from 'mongoose';
 
 
 router.get('usersanddiaries/:username ', async (req: Request, res: Response) => {
@@ -17,11 +19,11 @@ router.get('usersanddiaries/:username ', async (req: Request, res: Response) => 
     }
 })
 
-router.get('/meandmine', auth, (req: Request, res: Response) => {
+router.get('/meandmine', auth, (req: userInterface, res: Response) => {
     User.findOne({username: req.user.username})
-    .then(user => {
+    .then((user: object) => {
         Diary.find({owner: req.user.username})
-        .then(diary => {
+        .then((diary: object) => {
             res.send({user, diary})
         })
     })

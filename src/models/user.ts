@@ -1,8 +1,9 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import mongoose from 'mongoose';
+import validator from 'validator';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 require('dotenv').config();
+import { userInterface } from '../types/userInterface';
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -17,7 +18,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
     lowercase: true,
-    validate(value) {
+    validate(value: string) {
       if (!validator.isEmail(value)) {
         throw new Error('Email is invalid');
       }
@@ -28,7 +29,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6,
     trim: true,
-    validate(value) {
+    validate(value: string) {
       if (value.toLowerCase().includes('password')) {
         throw new Error('Password cannot contain "password"');
       }
@@ -41,7 +42,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function (next) {
-  const user = this;
+  const user: any = this;
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }
