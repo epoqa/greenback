@@ -8,8 +8,9 @@ router.post('/diary/create', auth, async (req, res) => {
 	try {
 		const diary = new Diary({owner: req.user.username.toLowerCase(), ...req.body})
 		await diary.save()
-		res.send(diary)
-	} catch (e) {
+		let diar = findOne({id: req.body.id, owner: req.user.username.toLowerCase()}) 
+		res.send(diar)
+	} catch (e) { 
 		res.status(400).send(e)
 	}
 })

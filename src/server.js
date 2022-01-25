@@ -15,6 +15,8 @@ app.use(bodyParser.json())
 
 app.use(cors())
 
+
+
 app.use(express.json())
 app.use(userRouter) 
 app.use(diaryRouter)
@@ -23,3 +25,4 @@ app.use(mergeRouter)
 app.listen(PORT, () => {
 	console.log(`http://localhost:${PORT}`)
 })
+

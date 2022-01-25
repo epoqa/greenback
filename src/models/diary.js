@@ -6,6 +6,11 @@ const Diary = mongoose.model('Diary', {
 		required: true,
 		trim: true
 	},
+	id:{
+		type: String,
+		required:true,
+		trim: true
+	},
 	type: {
 		type: String,
 		required: true,
