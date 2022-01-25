@@ -8,7 +8,8 @@ router.post('/diary/create', auth, async (req, res) => {
 	try {
 		const diary = new Diary({owner: req.user.username.toLowerCase(), ...req.body})
 		await diary.save()
-		let diar = findOne({id: req.body.id, owner: req.user.username.toLowerCase()}) 
+		const diar = await Diary.findOne({id: req.body.id, owner: req.user.username.toLowerCase()})
+		
 		res.send(diar)
 	} catch (e) { 
 		res.status(400).send(e)
@@ -20,7 +21,7 @@ router.delete('diary/delete/:id', auth, async (req, res) => {
 		return res.status(400).send({error: 'You are not the owner of this diary'})
 	}
 	try {
-		await Diary.findOneAndDelete({_id: req.params.id})
+		await Diary.findOneAndDelete({id: req.params.id})
 		res.send('diary deleted')
 	} catch (e) {
 		res.status(400).send(e)
@@ -29,7 +30,7 @@ router.delete('diary/delete/:id', auth, async (req, res) => {
 
 router.get('/diary/id/:id', async (req, res) => {
 	try {
-		const diary = await Diary.findById(req.params.id)
+		const diary = await Diary.findOne({id: req.params.id})
 		if (!diary) {
 			return res.status(404).send()
 		}
@@ -85,7 +86,7 @@ router.put('/diary/update/:id', auth, async (req, res) => {
 	}
 
 	try {
-		const diary = await Diary.findById(req.params.id)
+		const diary = await Diary.findOne({id: req.params.id})
 
 		if (!diary) {
 			return res.status(404).send()
@@ -105,7 +106,7 @@ router.put('/diary/picture/:id', auth, async (req, res) => {
 		})}
 
 	try {
-		const diary = await Diary.findById(req.params.id)
+		const diary = await Diary.findOne({id: req.params.id})
 
 		if (!diary) {
 			return res.status(404).send()
@@ -123,7 +124,7 @@ router.put('/diary/picture/:id', auth, async (req, res) => {
 
 router.put('/diary/comment/:id', auth, async (req, res) => { 
 	try {
-		const diary = await Diary.findById(req.params.id)
+		const diary = await Diary.findOne({id: req.params.id})
 		if (!diary) {
 			return res.status(404).send()
 		}
