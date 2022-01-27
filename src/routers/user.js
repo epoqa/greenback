@@ -9,7 +9,7 @@ const {generateAuthToken, removeItemOnce} = require('../services/services')
 
 let refreshTokens = []
 
-router.get("authToken", auth, (req, res) => {
+router.get("/authToken", auth, (req, res) => {
 	res.status(201).send("გაატარე ჩვენიანია")
 })
 router.post('/users/register', async (req, res) => {
