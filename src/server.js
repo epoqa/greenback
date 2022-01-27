@@ -1,7 +1,7 @@
 const express = require('express')
 
 const app = express()
-const PORT = process.env.PORT || 3333
+const PORT = process.env.PORT || 3332
 
 const userRouter = require('./routers/user')
 const bodyParser = require('body-parser')

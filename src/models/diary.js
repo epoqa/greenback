@@ -16,15 +16,35 @@ const Diary = mongoose.model('Diary', {
 		required: true,
 		trim: true
 	},
-	description: {
+	light: {
 		type: String,
-		required: false,
+		required: true,
 		trim: true
 	},
 	owner: {
 		type: String,
 		required: true,
 		ref: 'User'
+	},
+	fertilizer: {
+		type: String,
+		required: true,
+		trim: true
+	},
+	technology: {
+		type: String,
+		required: true,
+		trim: true
+	},
+	room:{
+		type: String,
+		required: true,
+		trim: true
+	},
+	ground: {
+		type: String,
+		required: true,
+		trim: true
 	},
 	createdAt: {
 		type: Date, 
