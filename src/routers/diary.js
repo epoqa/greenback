@@ -112,7 +112,27 @@ router.put('/diary/picture/:id', auth, async (req, res) => {
 			return res.status(404).send()
 		}
 
-		diary.picture = req.body.picture
+		diary.weeks.pictures.push({picture: req.body.picture})
+	
+		await diary.save()
+		res.send(diary)
+	}
+	catch (e) {
+		res.status(400).send(e)
+	}
+
+})
+router.put('/diary/week/:id', auth, async (req, res) => {
+	if(req.user.username.toLowerCase() !== req.body.owner.toLowerCase()) {
+		return res.status(401).send({ error: 'You are not authorized to update this diary' 
+		})}
+
+	try {
+		const diary = await Diary.findOne({id: req.params.id})
+		if (!diary) {
+			return res.status(404).send()
+		}
+		diary.weeks.push({week: req.body.week, weekType: req.body.weekType})
 		await diary.save()
 		res.send(diary)
 	}

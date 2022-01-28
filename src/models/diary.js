@@ -50,15 +50,31 @@ const Diary = mongoose.model('Diary', {
 		type: Date, 
 		default: Date.now
 	},
-	pictures: [
+	weeks: [
 		{
+			week: {
+				type: String,
+				required: true,
+				trim: true
+			},
+			weekType: {
+				type: String,
+				required: true,
+				trim: true
+			},
 			createdAt: {
-				type: Date, 
+				type: Date,
 				default: Date.now
 			},
-			picture: String
-		}
-	],
+			pictures: [
+				{
+					picture: {
+						type: String,
+						trim: true
+					}
+				}
+			]
+		}],
 	comments:  [
 		{
 			owner: String,
