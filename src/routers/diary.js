@@ -132,7 +132,7 @@ router.put('/diary/week/:id', auth, async (req, res) => {
 		if (!diary) {
 			return res.status(404).send()
 		}
-		diary.weeks.push({week: req.body.week, weekType: req.body.weekType})
+		diary.weeks.push({week: req.body.week, weekType: req.body.type})
 		await diary.save()
 		res.send(diary)
 	}
