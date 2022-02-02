@@ -157,4 +157,41 @@ router.put('/diary/comment/:id', auth, async (req, res) => {
 	}
 })
 
+router.delete('/diary/week/:id/:index', auth, async (req, res) => {
+	try {
+		const diary = await Diary.findOne({id: req.params.id})
+		if(req.user.username.toLowerCase() !== diary.owner.toLowerCase()) {
+			return res.status(401).send({ error: 'You are not authorized to update this diary'
+			})}
+		if (!diary) {
+			return res.status(404).send()
+		}
+		diary.weeks.splice(req.params.index, 1)
+		await diary.save()
+		res.send(diary)
+	}
+	catch (e) {
+		res.status(400).send(e)
+	}
+
+})
+
+router.delete('/diary/id/:id', auth,  async (req, res) => {
+	try {
+		const diary = await Diary.findOne({id: req.params.id})
+		if(req.user.username.toLowerCase() !== diary.owner.toLowerCase()) {
+			return res.status(401).send({ error: 'You are not authorized to update this diary'
+			})}
+		if (!diary) {
+			return res.status(404).send()
+		}
+		await diary.remove()
+		res.send(req.user.username)
+	}
+	catch (e) {
+		res.status(400).send(e)
+	}
+
+})
+
 module.exports = router
