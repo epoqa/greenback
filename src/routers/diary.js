@@ -238,7 +238,7 @@ router.delete('/diary/id/:id', auth, async (req, res) => {
 
 })
 
-router.delete('diary/:diaryid/comment/:commentid', auth, async (req, res) => {
+router.delete('/diary/:diaryid/comment/:commentid', auth, async (req, res) => {
 	try {
 		const diary = await Diary.findOne({
 			id: req.params.diaryid
