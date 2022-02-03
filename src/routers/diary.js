@@ -139,7 +139,7 @@ router.put('/diary/picture/:id', auth, async (req, res) => {
 			return res.status(404).send()
 		}
 
-		diary.weeks.pictures.push({
+		diary.weeks[req.body.weekNum].pictures.push({
 			picture: req.body.picture
 		})
 
