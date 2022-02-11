@@ -139,7 +139,7 @@ router.put('/diary/picture/:id', auth, async (req, res) => {
 			return res.status(404).send()
 		}
 
-		diary.weeks[req.body.weekNum].pictures.push({
+		diary.weeks[req.body.weekId].pictures.push({
 			picture: req.body.picture
 		})
 
@@ -165,8 +165,9 @@ router.put('/diary/week/:id', auth, async (req, res) => {
 			return res.status(404).send()
 		}
 		diary.weeks.push({
-			week: req.body.week,
-			weekType: req.body.type
+			week: req.body.type,
+			weekType: req.body.type,
+			weekId: req.body.weekId
 		})
 		await diary.save()
 		res.send(diary)
@@ -195,7 +196,7 @@ router.put('/diary/comment/:id', auth, async (req, res) => {
 	}
 })
 
-router.delete('/diary/week/:id/:index', auth, async (req, res) => {
+router.delete('/diary/week/:id/:weekId', auth, async (req, res) => {
 	try {
 		const diary = await Diary.findOne({
 			id: req.params.id
@@ -208,7 +209,7 @@ router.delete('/diary/week/:id/:index', auth, async (req, res) => {
 		if (!diary) {
 			return res.status(404).send()
 		}
-		diary.weeks.splice(req.params.index, 1)
+		diary.weeks.splice(req.params.weekId, 1)
 		await diary.save()
 		res.send(diary)
 	} catch (e) {
