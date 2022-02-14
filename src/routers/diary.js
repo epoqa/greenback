@@ -131,7 +131,7 @@ router.put('/diary/picture/:id', auth, async (req, res) => {
 	}
 
 	try {
-		const diary = await Diary.findOne({
+		let diary = await Diary.findOne({
 			id: req.params.id
 		})
 
@@ -139,11 +139,12 @@ router.put('/diary/picture/:id', auth, async (req, res) => {
 			return res.status(404).send()
 		}
 
-		diary.weeks[req.body.weekId].pictures.push({
-			picture: req.body.picture
-		})
+		let weekId = req.body.weekId
 
+		diary = diary.weeks.id(weekId)
+		diary.picture = req.body.picture
 		await diary.save()
+
 		res.send(diary)
 	} catch (e) {
 		res.status(400).send(e)
