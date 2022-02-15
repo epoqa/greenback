@@ -11,6 +11,11 @@ const Diary = mongoose.model('Diary', {
 		required:true,
 		trim: true
 	},
+	facturer: {
+		type: String,
+		required: true,
+		trim: true
+	},
 	type: {
 		type: String,
 		required: true,
@@ -58,6 +63,11 @@ const Diary = mongoose.model('Diary', {
 				trim: true
 			},
 			weekType: {
+				type: String,
+				required: true,
+				trim: true
+			},
+			weekId: {
 				type: String,
 				required: true,
 				trim: true

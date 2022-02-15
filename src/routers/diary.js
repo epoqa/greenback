@@ -96,7 +96,9 @@ router.put('/diary/update/:id', auth, async (req, res) => {
 	)
 
 	if (!isValidOperation) {
-		return res.status(400).send({ error: 'Invalid updates!' })
+		return res.status(400).send({
+			error: 'Invalid updates!',
+		})
 	}
 
 	try {
@@ -131,6 +133,7 @@ router.put('/diary/picture/:id', auth, async (req, res) => {
 		diary.weeks[req.body.weekNum].pictures.push({ picture: req.body.picture })
 
 		await diary.save()
+
 		res.send(diary)
 	} catch (e) {
 		res.status(400).send(e)
