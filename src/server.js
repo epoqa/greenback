@@ -10,19 +10,20 @@ const diaryRouter = require('./routers/diary')
 const mergeRouter = require('./routers/merge')
 require('./db/connection')
 
-app.use(bodyParser.urlencoded({extended : true}))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.use(cors())
-
-
+app.use(
+	cors({
+		credentials: true,
+	})
+)
 
 app.use(express.json())
-app.use(userRouter) 
+app.use(userRouter)
 app.use(diaryRouter)
 app.use(mergeRouter)
- 
+
 app.listen(PORT, () => {
 	console.log(`http://localhost:${PORT}`)
 })
-
