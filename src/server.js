@@ -1,10 +1,5 @@
 const express = require('express')
 require('dotenv').config()
-const domainsFromEnv = process.env.CORS_DOMAINS || ''
-const whitelist = domainsFromEnv.split(',').map(item => item.trim())
-
-console.log(whitelist)
-
 
 const cors = require('cors')
 const PORT = process.env.PORT || 3332
@@ -12,14 +7,10 @@ const bodyParser = require('body-parser')
 const app = express()
 
 const corsOptions = {
-	origin: function (origin, callback) {
-		if (!origin || whitelist.indexOf(origin) !== -1) {
-			callback(null, true)
-		} else {
-			callback(new Error('Not allowed by CORS'))
-		}
-	},
+	origin: '*',
 	credentials: true,
+	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+	allowedHeaders: [ 'Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With', 'X-HTTP-Method-Override', 'Accept-Language', 'Accept-Encoding', 'Access-Control-Request-Method', 'Access-Control-Request-Headers', 'Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials' ]
 }
 app.use(
 	cors(corsOptions)
@@ -29,6 +20,13 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }))
 app.use(bodyParser.json())
+
+app.all('*', function(req, res, next) {
+	res.header('Access-Control-Allow-Origin', '*')
+	res.header('Access-Control-Allow-Headers', 'X-Requested-With')
+	res.header('Access-Control-Allow-Headers', 'Content-Type')
+	next()
+})
 
 
 const userRouter = require('./routers/user')
