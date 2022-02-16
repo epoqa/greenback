@@ -22,7 +22,7 @@ router.post('/diary/create', auth, async (req, res) => {
 	}
 })
 
-router.delete('diary/delete/:id', auth, async (req, res) => {
+router.delete('/diary/delete/:id', auth, async (req, res) => {
 	if (req.user.username.toLowerCase() !== req.body.owner.toLowerCase()) {
 		return res.status(400).send({
 			error: 'You are not the owner of this diary'
