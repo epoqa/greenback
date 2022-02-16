@@ -30,6 +30,8 @@
     "jwt-decode": "^3.1.2",
     "mongodb": "^4.3.0",
     "mongoose": "^6.1.6",
+    "nodemailer": "^6.7.2",
+    "uniqid": "^5.4.0",
     "validator": "^13.7.0"
   }
 }
