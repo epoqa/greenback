@@ -8,27 +8,30 @@ router.post('/diary/create', auth, async (req, res) => {
 	try {
 		const diary = new Diary({
 			owner: req.user.username.toLowerCase(),
-			...req.body,
+			...req.body
 		})
 		await diary.save()
 		const diar = await Diary.findOne({
 			id: req.body.id,
-			owner: req.user.username.toLowerCase(),
+			owner: req.user.username.toLowerCase()
 		})
 		res.send(diar)
 	} catch (e) {
+
 		res.status(400).send(e)
 	}
 })
 
-router.delete('/diary/delete/:id', auth, async (req, res) => {
+router.delete('diary/delete/:id', auth, async (req, res) => {
 	if (req.user.username.toLowerCase() !== req.body.owner.toLowerCase()) {
-		return res
-			.status(400)
-			.send({ error: 'You are not the owner of this diary' })
+		return res.status(400).send({
+			error: 'You are not the owner of this diary'
+		})
 	}
 	try {
-		await Diary.findOneAndDelete({ id: req.params.id })
+		await Diary.findOneAndDelete({
+			id: req.params.id
+		})
 		res.send('diary deleted')
 	} catch (e) {
 		res.status(400).send(e)
@@ -37,7 +40,9 @@ router.delete('/diary/delete/:id', auth, async (req, res) => {
 
 router.get('/diary/id/:id', async (req, res) => {
 	try {
-		const diary = await Diary.findOne({ id: req.params.id })
+		const diary = await Diary.findOne({
+			id: req.params.id
+		})
 		if (!diary) {
 			return res.status(404).send()
 		}
@@ -48,10 +53,11 @@ router.get('/diary/id/:id', async (req, res) => {
 })
 
 router.get('/diary/user/:username', async (req, res) => {
+
 	try {
 		console.log(req.params.username)
 		const diary = await Diary.find({
-			owner: req.params.username.toLowerCase(),
+			owner: req.params.username.toLowerCase()
 		})
 		if (!diary) {
 			return res.status(404).send()
@@ -74,7 +80,7 @@ router.get('/diary/all', async (req, res) => {
 router.get('/diary/mine', auth, async (req, res) => {
 	try {
 		const diaries = await Diary.find({
-			owner: req.user.username.toLowerCase(),
+			owner: req.user.username.toLowerCase()
 		})
 		res.send(diaries)
 	} catch (e) {
@@ -84,31 +90,31 @@ router.get('/diary/mine', auth, async (req, res) => {
 
 router.put('/diary/update/:id', auth, async (req, res) => {
 	if (req.user.username.toLowerCase() !== req.body.owner.toLowerCase()) {
-		return res
-			.status(401)
-			.send({ error: 'You are not authorized to update this diary' })
+		return res.status(401).send({
+			error: 'You are not authorized to update this diary'
+		})
 	}
 
 	const updates = Object.keys(req.body)
 	const allowedUpdates = ['diaryName', 'type', 'description']
-	const isValidOperation = updates.every((update) =>
-		allowedUpdates.includes(update)
-	)
+	const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
 	if (!isValidOperation) {
 		return res.status(400).send({
-			error: 'Invalid updates!',
+			error: 'Invalid updates!'
 		})
 	}
 
 	try {
-		const diary = await Diary.findOne({ id: req.params.id })
+		const diary = await Diary.findOne({
+			id: req.params.id
+		})
 
 		if (!diary) {
 			return res.status(404).send()
 		}
 
-		updates.forEach((update) => (diary[update] = req.body[update]))
+		updates.forEach((update) => diary[update] = req.body[update])
 		await diary.save()
 		res.send(diary)
 	} catch (e) {
@@ -117,62 +123,148 @@ router.put('/diary/update/:id', auth, async (req, res) => {
 })
 
 router.put('/diary/picture/:id', auth, async (req, res) => {
+	console.log('Run')
 	if (req.user.username.toLowerCase() !== req.body.owner.toLowerCase()) {
-		return res
-			.status(401)
-			.send({ error: 'You are not authorized to update this diary' })
+		return res.status(401).send({
+			error: 'You are not authorized to update this diary'
+		})
 	}
 
 	try {
-		const diary = await Diary.findOne({ id: req.params.id })
-
+		let weekId = req.body.weekId
+		let diary = await Diary.findOne({
+			id: req.params.id
+		})
 		if (!diary) {
 			return res.status(404).send()
 		}
-
-		diary.weeks[req.body.weekNum].pictures.push({ picture: req.body.picture })
-
+		diary = diary.weeks.map((week) => {
+			if (week.id === weekId) {
+				week.pictures.push(req.body.picture)
+			}
+			return week
+		})
 		await diary.save()
 
 		res.send(diary)
 	} catch (e) {
 		res.status(400).send(e)
-		console.log(e)
 	}
+
 })
 router.put('/diary/week/:id', auth, async (req, res) => {
-	console.log(req)
 	if (req.user.username.toLowerCase() !== req.body.owner.toLowerCase()) {
-		return res
-			.status(401)
-			.send({ error: 'You are not authorized to update this diary' })
+		return res.status(401).send({
+			error: 'You are not authorized to update this diary'
+		})
 	}
 
 	try {
-		const diary = await Diary.findOne({ id: req.params.id })
+		const diary = await Diary.findOne({
+			id: req.params.id
+		})
 		if (!diary) {
 			return res.status(404).send()
 		}
-		diary.weeks.push({ week: req.body.week, weekType: req.body.type })
+		diary.weeks.push({
+			week: req.body.type,
+			weekType: req.body.type,
+			weekId: req.body.weekId
+		})
 		await diary.save()
 		res.send(diary)
 	} catch (e) {
 		res.status(400).send(e)
 	}
+
 })
 
 router.put('/diary/comment/:id', auth, async (req, res) => {
 	try {
-		const diary = await Diary.findOne({ id: req.params.id })
+		const diary = await Diary.findOne({
+			id: req.params.id
+		})
 		if (!diary) {
 			return res.status(404).send()
 		}
 		diary.comments.push({
 			comment: req.body.comment,
-			owner: req.user.username,
+			owner: req.user.username
 		})
 		await diary.save()
 		res.send(diary)
+	} catch (e) {
+		res.status(400).send(e)
+	}
+})
+
+router.delete('/diary/week/:id/:weekId', auth, async (req, res) => {
+	try {
+		const diary = await Diary.findOne({
+			id: req.params.id
+		})
+		if (req.user.username.toLowerCase() !== diary.owner.toLowerCase()) {
+			return res.status(401).send({
+				error: 'You are not authorized to update this diary'
+			})
+		}
+		if (!diary) {
+			return res.status(404).send()
+		}
+		diary.weeks.splice(req.params.weekId, 1)
+		await diary.save()
+		res.send(diary)
+	} catch (e) {
+		res.status(400).send(e)
+	}
+
+})
+
+router.delete('/diary/id/:id', auth, async (req, res) => {
+	try {
+		const diary = await Diary.findOne({
+			id: req.params.id
+		})
+		if (req.user.username.toLowerCase() !== diary.owner.toLowerCase()) {
+			return res.status(401).send({
+				error: 'You are not authorized to update this diary'
+			})
+		}
+		if (!diary) {
+			return res.status(404).send()
+		}
+		await diary.remove()
+		res.send(req.user.username)
+	} catch (e) {
+		res.status(400).send(e)
+	}
+
+})
+
+router.delete('/diary/:diaryid/comment/:commentid', auth, async (req, res) => {
+	try {
+		const diary = await Diary.findOne({
+			id: req.params.diaryid
+		})
+		if (!diary) {
+			return res.status(404).send()
+		}
+		const comments = diary.comments
+		const comment = comments.find(c => c.id === req.params.commentid)
+		if (req.user.username.toLowerCase() !== comment.owner.toLowerCase()) {
+			return res.status(401).send({
+				error: 'You are not authorized to update this diary'
+			})
+		}
+		if (!comment) {
+			return res.status(404).send()
+		}
+		const index = diary.comments.indexOf(comment)
+		diary.comments.splice(index, 1)
+		await diary.save()
+		res.send(diary)
+
+
 	} catch (e) {
 		res.status(400).send(e)
 	}
