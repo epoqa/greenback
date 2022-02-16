@@ -6,7 +6,7 @@ const bodyParser = require('body-parser')
 const app = express()
 app.use(
 	cors({
-		credentials: true,
+		origin : "*",
 	})
 )
 
