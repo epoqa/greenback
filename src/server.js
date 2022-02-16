@@ -1,20 +1,20 @@
 const express = require('express')
 require('dotenv').config()
 
-const cors = require('cors')
+// const cors = require('cors')
 const PORT = process.env.PORT || 3332
 const bodyParser = require('body-parser')
 const app = express()
 
-const corsOptions = {
-	origin: '*',
-	credentials: true,
-	// methods: ['GET', 'POST', 'PUT', 'DELETE'],
-	// allowedHeaders: [ 'Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With', 'X-HTTP-Method-Override', 'Accept-Language', 'Accept-Encoding', 'Access-Control-Request-Method', 'Access-Control-Request-Headers', 'Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials' ]
-}
-app.use(
-	cors(corsOptions)
-)
+// const corsOptions = {
+// 	origin: '*',
+// 	credentials: true,
+// 	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+// 	allowedHeaders: [ 'Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With', 'X-HTTP-Method-Override', 'Accept-Language', 'Accept-Encoding', 'Access-Control-Request-Method', 'Access-Control-Request-Headers', 'Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials' ]
+// }
+// app.use(
+// 	cors(corsOptions)
+// )
 app.use(function(req, res, next) {
 	res.setHeader('Access-Control-Allow-Origin', '*')
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
