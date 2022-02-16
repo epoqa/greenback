@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const PORT = process.env.PORT || 3332
+const bodyParser = require('body-parser')
 
 const app = express()
 app.use(cors())
@@ -10,7 +11,6 @@ app.use(bodyParser.json())
 
 
 const userRouter = require('./routers/user')
-const bodyParser = require('body-parser')
 const diaryRouter = require('./routers/diary')
 const mergeRouter = require('./routers/merge')
 require('./db/connection')
