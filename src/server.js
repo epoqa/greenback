@@ -6,33 +6,13 @@ const PORT = process.env.PORT || 3332
 const bodyParser = require('body-parser')
 const app = express()
 
-const allowedOrigins = [
-	'capacitor://localhost',
-	'ionic://localhost',
-	'http://localhost',
-	'http://localhost:3000',
-	'http://localhost:3001',
-	'https://greenfrontt-a0qnnq7np-epoqa.vercel.app', 
-	'https://greenfront.vercel.app', 
-	'https://greenfront-i6v43afmn-epoqa.vercel.app',
-	'https://greenfront-qnvofksc5-epoqa.vercel.app'
-
-]
-
-// Reflect the origin if it's in the allowed list or not defined (cURL, Postman, etc.)
 const corsOptions = {
-	origin: (origin, callback) => {
-		if (allowedOrigins.includes(origin) || !origin) {
-			callback(null, true)
-		} else {
-			callback(new Error('Origin not allowed by CORS'))
-		}
-	},
+	origin: '*',
+	credentials: true
 }
-
-// Enable preflight requests for all routes
-app.options('*', cors(corsOptions))
-
+app.use(
+	cors(corsOptions)
+)
 
 app.use(bodyParser.urlencoded({
 	extended: true
