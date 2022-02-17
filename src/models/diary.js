@@ -6,6 +6,12 @@ const Diary = mongoose.model('Diary', {
 		required: true,
 		trim: true
 	},
+	likes: [
+		{
+			type: String,
+			trim: true
+		},
+	],
 	id:{
 		type: String,
 		required:true,
@@ -80,7 +86,11 @@ const Diary = mongoose.model('Diary', {
 				{
 					picture: {
 						type: String,
-						trim: true
+						trim: true,
+					},
+					createdAt: {
+						type: Date,
+						default: Date.now
 					}
 				}
 			]

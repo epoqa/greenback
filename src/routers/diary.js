@@ -2,6 +2,7 @@ const express = require('express')
 
 const router = new express.Router()
 const Diary = require('../models/diary')
+const User = require('../models/user')
 const auth = require('../middleware/auth')
 
 router.post('/diary/create', auth, async (req, res) => {
@@ -15,6 +16,14 @@ router.post('/diary/create', auth, async (req, res) => {
 			id: req.body.id,
 			owner: req.user.username.toLowerCase()
 		})
+
+		await User.findOne({
+			username: req.user.username.toLowerCase()
+		}).then(user => {
+			user.diariesNum = user.diariesNum + 1
+			user.save()
+		})
+
 		res.send(diar)
 	} catch (e) {
 
@@ -32,6 +41,14 @@ router.delete('/diary/delete/:id', auth, async (req, res) => {
 		await Diary.findOneAndDelete({
 			id: req.params.id
 		})
+
+		await User.findOne({
+			username: req.user.username.toLowerCase()
+		}).then(user => {
+			user.diariesNum = user.diariesNum - 1
+			user.save()
+		})
+
 		res.send('diary deleted')
 	} catch (e) {
 		res.status(400).send(e)
@@ -266,6 +283,70 @@ router.delete('/diary/:diaryid/comment/:commentid', auth, async (req, res) => {
 		res.send(diary)
 
 
+	} catch (e) {
+		res.status(400).send(e)
+	}
+})
+
+// like diary
+router.put('/diary/like/:id',auth, async (req, res) => {
+	try {
+		const diary = await Diary.findOne({
+			id: req.params.id
+		})
+		if (!diary) {
+			return res.status(404).send()
+		}
+		const user = req.user.username
+		if (diary.likes.includes(user)) {
+			return res.status(400).send({
+				error: 'You have already liked this diary'
+			})
+		}
+		diary.likes.push(user)
+		await User.findOne({
+			username: diary.owner
+		}).then((user) => {
+			user.likes = user.likes + 1
+			console.log(user)
+			user.save()
+		})
+		
+
+		await diary.save()
+		res.send(diary)
+	} catch (e) {
+		res.status(400).send(e)
+	}
+})
+
+// dislike diary
+router.put('/diary/dislike/:id', auth, async (req, res) => {
+
+	try {
+		const diary = await Diary.findOne({
+			id: req.params.id
+		})
+		if (!diary) {
+			return res.status(404).send()
+		}
+		const user = req.user.username
+		if (!diary.likes.includes(user)) {
+			return res.status(400).send({
+				error: 'You have not liked this diary'
+			})
+		}
+		diary.likes = diary.likes.filter(l => l !== user)
+
+		await User.findOne({
+			username: diary.owner
+		}).then ((user) => {
+			user.likes = user.likes - 1
+			user.save()
+		})
+
+		await diary.save()
+		res.send(diary)
 	} catch (e) {
 		res.status(400).send(e)
 	}

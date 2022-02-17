@@ -9,6 +9,18 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		trim: true
 	},
+	picture: {
+		type: String,
+		trim: true
+	},
+	likes: {
+		type: Number,
+		default: 0
+	},
+	diariesNum: {
+		type: Number,
+		default: 0
+	},
 	email: {
 		type: String,
 		unique: true,
