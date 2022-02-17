@@ -209,7 +209,15 @@ const transporter = nodemailer.createTransport({
 
 router.post('/user/verify', async (req, res) => {
 	const { email } = req.body
-
+	
+	let existWithEmail = await User.findOne({
+		email: email,
+	})
+	if (existWithEmail) {
+		return res.status(400).send({
+			error: 'ასეთი ემაილი უკვე არსებობს',
+		})
+	}
 	const code = Math.floor(Math.random() * (9999 - 1000) + 1000)
 
 	const token = jwt.sign(
