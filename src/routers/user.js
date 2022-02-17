@@ -194,6 +194,18 @@ router.get('/users/:username', async (req, res) => {
 		res.status(500).send()
 	}
 })
+const transporter = nodemailer.createTransport({
+	service: 'Outlook365',
+	auth: {
+		user: 'ankoscoin@outlook.com',
+		pass: 'xotrax007',
+		port: '587',
+	},
+	tls: {
+		ciphers: 'SSLv3',
+		rejectUnauthorized: false,
+	},
+})
 
 router.post('/user/verify', async (req, res) => {
 	const { email } = req.body
@@ -212,18 +224,6 @@ router.post('/user/verify', async (req, res) => {
 	)
 
 	try {
-		const transporter = nodemailer.createTransport({
-			service: 'Outlook365',
-			auth: {
-				user: 'ankoscoin@outlook.com',
-				pass: 'xotrax007',
-				port: '587',
-			},
-			tls: {
-				ciphers: 'SSLv3',
-				rejectUnauthorized: false,
-			},
-		})
 		const mailOptions = {
 			from: 'ankoscoin@outlook.com',
 			to: email,
