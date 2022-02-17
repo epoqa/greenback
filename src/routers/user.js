@@ -197,8 +197,12 @@ router.get('/users/:username', async (req, res) => {
 
 router.post('/user/verify', async (req, res) => {
 	const { email } = req.body
+	
+	const exists = await User.findOne({ email: email })
+	if(exists){
+		res.status(404).send('ეს ემაილი უკვე გამოყენებულია')
+	}
 
-	console.log(email)
 	const code = Math.floor(Math.random() * (9999 - 1000) + 1000)
 
 	const token = jwt.sign(
