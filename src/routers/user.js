@@ -197,11 +197,6 @@ router.get('/users/:username', async (req, res) => {
 
 router.post('/user/verify', async (req, res) => {
 	const { email } = req.body
-	
-	const exists = await User.findOne({ email: email })
-	if(exists){
-		return res.send('ეს ემაილი უკვე გამოყენებულია')
-	}
 
 	const code = Math.floor(Math.random() * (9999 - 1000) + 1000)
 
