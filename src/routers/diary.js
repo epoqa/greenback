@@ -211,7 +211,8 @@ router.delete('/diary/week/:id/:weekId', auth, async (req, res) => {
 		if (!diary) {
 			return res.status(404).send()
 		}
-		diary.weeks.splice(req.params.weekId, 1)
+		diary.weeks = diary.weeks.filter((week) => week.weekId !== req.params.weekId)
+
 		await diary.save()
 		res.send(diary)
 	} catch (e) {
