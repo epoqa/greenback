@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const express = require('express')
 const User = require('../models/user')
 const router = new express.Router()
@@ -7,7 +8,10 @@ const auth = require('../middleware/auth')
 const nodemailer = require('nodemailer')
 
 require('dotenv').config()
-const { generateAuthToken, removeItemOnce } = require('../services/services')
+const {
+	generateAuthToken,
+	removeItemOnce
+} = require('../services/services')
 
 let refreshTokens = []
 
@@ -20,10 +24,14 @@ router.post('/users/register', async (req, res) => {
 
 	const decoded = jwt.verify(token, process.env.JWT_EMAIL_VERIFICATION)
 	if (+decoded.code !== +code) {
-		return res.status(400).send({ error: 'არასწორი კოდი' })
+		return res.status(400).send({
+			error: 'არასწორი კოდი'
+		})
 	}
-	if(decoded.email !== req.body.email ){
-		return res.status(400).send({ error: 'არასწორი ემაილი' })
+	if (decoded.email !== req.body.email) {
+		return res.status(400).send({
+			error: 'არასწორი ემაილი'
+		})
 	}
 
 	req.body.username = req.body.username.toLowerCase()
@@ -83,14 +91,12 @@ router.post('/users/login', async (req, res) => {
 				error: 'პაროლი არასწორია',
 			})
 		}
-		const refreshToken = jwt.sign(
-			{
-				_id: user._id,
-			},
-			process.env.JWT_REFRESH_TOKEN,
-			{
-				expiresIn: '365d',
-			}
+		const refreshToken = jwt.sign({
+			_id: user._id,
+		},
+		process.env.JWT_REFRESH_TOKEN, {
+			expiresIn: '365d',
+		}
 		)
 		refreshTokens.push(refreshToken)
 		const token = await generateAuthToken(user._id)
@@ -208,11 +214,12 @@ const transporter = nodemailer.createTransport({
 })
 
 router.post('/user/verify', async (req, res) => {
-	const { email } = req.body
-	
+	const {
+		email
+	} = req.body
 
 	//this returns cors error
-	
+
 	// let existWithEmail = await User.findOne({
 	// 	email: email,
 	// })
@@ -223,15 +230,13 @@ router.post('/user/verify', async (req, res) => {
 	// }
 	const code = Math.floor(Math.random() * (9999 - 1000) + 1000)
 
-	const token = jwt.sign(
-		{
-			email: email,
-			code: code,
-		},
-		process.env.JWT_EMAIL_VERIFICATION,
-		{
-			expiresIn: '1h',
-		}
+	const token = jwt.sign({
+		email: email,
+		code: code,
+	},
+	process.env.JWT_EMAIL_VERIFICATION, {
+		expiresIn: '1h',
+	}
 	)
 
 	try {
@@ -252,10 +257,81 @@ router.post('/user/verify', async (req, res) => {
 				})
 			}
 		})
-		
 	} catch (e) {
 		res.status(500).send()
 	}
+})
+
+// password recover
+router.post('/user/recover', async (req, res) => {
+	const { email } = req.body
+
+	const user = await User.findOne({
+		email,
+	})
+	if (!user) {
+		return res.status(404).send({
+			error: 'ასეთი მომხმარებელი არ არსებობს',
+		})
+	}
+
+	const token = jwt.sign({
+		_id: user._id,
+	},
+	process.env.JWT_EMAIL_VERIFICATION, {
+		expiresIn: '1h',
+	}
+	)
+
+	try {
+		const mailOptions = {
+			from: 'ankoscoin@outlook.com',
+			to: email,
+			subject: 'პაროლის აღდგენა',
+			text: `აღდგენის ლინკია: www.domain.com/recover/${token}`,
+		}
+
+		transporter.sendMail(mailOptions, (err, info) => {
+			if (err) {
+				console.log(err)
+			} else {
+				console.log(info)
+				res.status(200).send({
+					text: 'აღდგენის ლინკი წარმატებით გაიგზავნა თქვენს ემაილზე'
+					
+				})
+			}
+		})
+	}
+	catch (e) {
+		res.status(500).send()
+	}	
+})
+
+
+router.post('/user/recover/:token', async (req, res) => {
+	const { password } = req.body
+	const { token } = req.params
+
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_EMAIL_VERIFICATION)
+		const user = await User.findOne({
+			_id: decoded._id,
+		})
+		if (!user) {
+			return res.status(404).send({
+				error: 'ასეთი მომხმარებელი არ არსებობს',
+			})
+		}
+		user.password = await bcrypt.hash(password, 8)
+		await user.save()
+		res.send()
+	}
+	catch (e) {
+		res.status(500).send()
+	}
+
+
 })
 
 module.exports = router
