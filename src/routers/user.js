@@ -297,7 +297,7 @@ router.post('/user/recover', async (req, res) => {
 			} else {
 				console.log(info)
 				res.status(200).send({
-					text: 'აღდგენის ლინკი წარმატებით გაიგზავნა თქვენს ემაილზე'
+					message: 'აღდგენის ლინკი წარმატებით გაიგზავნა თქვენს ემაილზე'
 					
 				})
 			}
@@ -323,9 +323,12 @@ router.post('/user/recover/:token', async (req, res) => {
 				error: 'ასეთი მომხმარებელი არ არსებობს',
 			})
 		}
-		user.password = await bcrypt.hash(password, 8)
+		const newPassword = await bcrypt.hash(password, 8)
+		user.password = newPassword
 		await user.save()
-		res.send()
+		res.status(200).send({
+			message: 'პაროლი წარმატებით შეიცვალა'
+		})
 	}
 	catch (e) {
 		res.status(500).send()
