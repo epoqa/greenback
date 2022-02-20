@@ -70,7 +70,6 @@ router.get('/diary/id/:id', async (req, res) => {
 
 router.get('/diary/user/:username', async (req, res) => {
 	try {
-		console.log(req.params.username)
 		const diary = await Diary.find({
 			owner: req.params.username.toLowerCase(),
 		})
@@ -301,7 +300,6 @@ router.put('/diary/like/:id', auth, async (req, res) => {
 			username: diary.owner,
 		}).then((user) => {
 			user.likes = user.likes + 1
-			console.log(user)
 			user.save()
 		})
 

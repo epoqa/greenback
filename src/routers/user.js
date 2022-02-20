@@ -107,7 +107,7 @@ router.post('/users/login', async (req, res) => {
 			refreshToken,
 		})
 	} catch (e) {
-		res.status(400).send()
+		res.status(400).send('პრობლემა')
 	}
 })
 
@@ -323,12 +323,15 @@ router.post('/user/recover/:token', async (req, res) => {
 				error: 'ასეთი მომხმარებელი არ არსებობს',
 			})
 		}
-		const newPassword = await bcrypt.hash(password, 8)
-		user.password = newPassword
+		user.password = password
 		await user.save()
-		res.status(200).send({
-			message: 'პაროლი წარმატებით შეიცვალა'
-		})
+			.then(() => {
+				res.status(200).send({
+					message: 'პაროლი წარმატებით შეიცვალა'
+				})
+			}
+			)
+
 	}
 	catch (e) {
 		res.status(500).send()
