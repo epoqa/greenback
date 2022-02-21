@@ -39,13 +39,14 @@ router.delete('/diary/delete/:id', auth, async (req, res) => {
 	try {
 		await Diary.findOneAndDelete({
 			id: req.params.id,
-		})
+		}).then(() => {
+			User.findOne({
+				username: req.user.username.toLowerCase(),
+			}).then((user) => {
+				user.diariesNum = user.diariesNum - 1
+				user.save()
+			})
 
-		await User.findOne({
-			username: req.user.username.toLowerCase(),
-		}).then((user) => {
-			user.diariesNum = user.diariesNum - 1
-			user.save()
 		})
 
 		res.send('diary deleted')
@@ -325,15 +326,14 @@ router.put('/diary/dislike/:id', auth, async (req, res) => {
 				error: 'You have not liked this diary',
 			})
 		}
-		diary.likes = diary.likes.filter((l) => l !== user)
-
-		await User.findOne({
-			username: diary.owner,
-		}).then((user) => {
-			user.likes = user.likes - 1
-			user.save()
+		diary.likes = diary.likes.filter((l) => l !== user).then(() => {
+			User.findOne({
+				username: diary.owner,
+			}).then((user) => {
+				user.likes = user.likes - 1
+				user.save()
+			})
 		})
-
 		await diary.save()
 		res.send(diary)
 	} catch (e) {
