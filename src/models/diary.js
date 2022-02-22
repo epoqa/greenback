@@ -4,83 +4,83 @@ const Diary = mongoose.model('Diary', {
 	diaryName: {
 		type: String,
 		required: true,
-		trim: true
+		trim: true,
 	},
 	likes: [
 		{
 			type: String,
-			trim: true
+			trim: true,
 		},
 	],
-	id:{
+	id: {
 		type: String,
-		required:true,
-		trim: true
+		required: true,
+		trim: true,
 	},
 	facturer: {
 		type: String,
 		required: true,
-		trim: true
+		trim: true,
 	},
 	type: {
 		type: String,
 		required: true,
-		trim: true
+		trim: true,
 	},
 	light: {
 		type: String,
 		required: true,
-		trim: true
+		trim: true,
 	},
 	owner: {
 		type: String,
 		required: true,
-		ref: 'User'
+		ref: 'User',
 	},
 	fertilizer: {
 		type: String,
 		required: true,
-		trim: true
+		trim: true,
 	},
 	technology: {
 		type: String,
 		required: true,
-		trim: true
+		trim: true,
 	},
-	room:{
+	room: {
 		type: String,
 		required: true,
-		trim: true
+		trim: true,
 	},
 	ground: {
 		type: String,
 		required: true,
-		trim: true
+		trim: true,
 	},
 	createdAt: {
-		type: Date, 
-		default: Date.now
+		type: Date,
+		default: Date.now,
 	},
 	weeks: [
 		{
 			week: {
 				type: String,
 				required: true,
-				trim: true
+				trim: true,
 			},
 			weekType: {
 				type: String,
 				required: true,
-				trim: true
+				trim: true,
 			},
 			weekId: {
 				type: String,
 				required: true,
-				trim: true
+				trim: true,
 			},
 			createdAt: {
 				type: Date,
-				default: Date.now
+				default: Date.now,
 			},
 			pictures: [
 				{
@@ -90,21 +90,22 @@ const Diary = mongoose.model('Diary', {
 					},
 					createdAt: {
 						type: Date,
-						default: Date.now
-					}
-				}
-			]
-		}],
-	comments:  [
+						default: Date.now,
+					},
+				},
+			],
+		},
+	],
+	comments: [
 		{
 			owner: String,
-			comment: String,         
+			comment: String,
+			commentId: String,
 			createdAt: {
 				type: Date,
-				default: Date.now
-			}
-            
-		}
-	]
-})   
+				default: Date.now,
+			},
+		},
+	],
+})
 module.exports = Diary

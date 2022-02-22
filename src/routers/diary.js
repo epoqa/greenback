@@ -46,7 +46,6 @@ router.delete('/diary/delete/:id', auth, async (req, res) => {
 				user.diariesNum = user.diariesNum - 1
 				user.save()
 			})
-
 		})
 
 		res.send('diary deleted')
@@ -202,6 +201,7 @@ router.put('/diary/comment/:id', auth, async (req, res) => {
 		diary.comments.push({
 			comment: req.body.comment,
 			owner: req.user.username,
+			commentId: req.body.commentId,
 		})
 		await diary.save()
 		res.send(diary)
@@ -326,14 +326,16 @@ router.put('/diary/dislike/:id', auth, async (req, res) => {
 				error: 'You have not liked this diary',
 			})
 		}
-		diary.likes = diary.likes.filter((l) => l !== user).then(() => {
-			User.findOne({
-				username: diary.owner,
-			}).then((user) => {
-				user.likes = user.likes - 1
-				user.save()
+		diary.likes = diary.likes
+			.filter((l) => l !== user)
+			.then(() => {
+				User.findOne({
+					username: diary.owner,
+				}).then((user) => {
+					user.likes = user.likes - 1
+					user.save()
+				})
 			})
-		})
 		await diary.save()
 		res.send(diary)
 	} catch (e) {
