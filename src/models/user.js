@@ -13,6 +13,25 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		trim: true
 	},
+	gender:{
+		type: String,
+		trim: true,
+		default: 'none'
+	},
+	age:{
+		type: Number,
+		default: 0
+	},
+	location:{
+		type: String,
+		trim: true,
+		default: 'none'
+	},
+	about:{
+		type: String,
+		trim: true,
+		default: 'none'
+	},
 	likes: {
 		type: Number,
 		default: 0

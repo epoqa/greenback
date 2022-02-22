@@ -346,4 +346,23 @@ router.post('/user/recover/:token', async (req, res) => {
 
 })
 
+
+//update user
+
+router.post('/user/update', auth, async (req, res) => {
+	const {gender, age, location, about, newPassword} = req.body
+	try {
+		const user = await User.findByIdAndUpdate(req.user._id, {
+			gender,
+			age,
+			location,
+			about,
+			password: newPassword
+		})
+		res.status(200).send(user)
+	} catch (e) {
+		res.status(500).send()
+	}
+})
+
 module.exports = router
