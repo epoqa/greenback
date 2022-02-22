@@ -315,9 +315,15 @@ router.post('/user/recover/:token', async (req, res) => {
 
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_EMAIL_VERIFICATION)
+		if(!decoded) { 
+			return res.status(401).send({
+				error: 'არასწორი ტოკენი'
+			})
+		}
 		const user = await User.findOne({
 			_id: decoded._id,
 		})
+		
 		if (!user) {
 			return res.status(404).send({
 				error: 'ასეთი მომხმარებელი არ არსებობს',
