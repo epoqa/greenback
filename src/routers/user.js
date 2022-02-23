@@ -8,10 +8,7 @@ const auth = require('../middleware/auth')
 const nodemailer = require('nodemailer')
 
 require('dotenv').config()
-const {
-	generateAuthToken,
-	removeItemOnce
-} = require('../services/services')
+const { generateAuthToken, removeItemOnce } = require('../services/services')
 
 let refreshTokens = []
 
@@ -25,12 +22,12 @@ router.post('/users/register', async (req, res) => {
 	const decoded = jwt.verify(token, process.env.JWT_EMAIL_VERIFICATION)
 	if (+decoded.code !== +code) {
 		return res.status(400).send({
-			error: 'არასწორი კოდი'
+			error: 'არასწორი კოდი',
 		})
 	}
 	if (decoded.email !== req.body.email) {
 		return res.status(400).send({
-			error: 'არასწორი ემაილი'
+			error: 'არასწორი ემაილი',
 		})
 	}
 
@@ -91,12 +88,14 @@ router.post('/users/login', async (req, res) => {
 				error: 'პაროლი არასწორია',
 			})
 		}
-		const refreshToken = jwt.sign({
-			_id: user._id,
-		},
-		process.env.JWT_REFRESH_TOKEN, {
-			expiresIn: '365d',
-		}
+		const refreshToken = jwt.sign(
+			{
+				_id: user._id,
+			},
+			process.env.JWT_REFRESH_TOKEN,
+			{
+				expiresIn: '365d',
+			}
 		)
 		refreshTokens.push(refreshToken)
 		const token = await generateAuthToken(user._id)
@@ -214,9 +213,7 @@ const transporter = nodemailer.createTransport({
 })
 
 router.post('/user/verify', async (req, res) => {
-	const {
-		email
-	} = req.body
+	const { email } = req.body
 
 	//this returns cors error
 
@@ -230,13 +227,15 @@ router.post('/user/verify', async (req, res) => {
 	// }
 	const code = Math.floor(Math.random() * (9999 - 1000) + 1000)
 
-	const token = jwt.sign({
-		email: email,
-		code: code,
-	},
-	process.env.JWT_EMAIL_VERIFICATION, {
-		expiresIn: '1h',
-	}
+	const token = jwt.sign(
+		{
+			email: email,
+			code: code,
+		},
+		process.env.JWT_EMAIL_VERIFICATION,
+		{
+			expiresIn: '1h',
+		}
 	)
 
 	try {
@@ -275,12 +274,14 @@ router.post('/user/recover', async (req, res) => {
 		})
 	}
 
-	const token = jwt.sign({
-		_id: user._id,
-	},
-	process.env.JWT_EMAIL_VERIFICATION, {
-		expiresIn: '1h',
-	}
+	const token = jwt.sign(
+		{
+			_id: user._id,
+		},
+		process.env.JWT_EMAIL_VERIFICATION,
+		{
+			expiresIn: '1h',
+		}
 	)
 
 	try {
@@ -297,17 +298,14 @@ router.post('/user/recover', async (req, res) => {
 			} else {
 				console.log(info)
 				res.status(200).send({
-					message: 'აღდგენის ლინკი წარმატებით გაიგზავნა თქვენს ემაილზე'
-					
+					message: 'აღდგენის ლინკი წარმატებით გაიგზავნა თქვენს ემაილზე',
 				})
 			}
 		})
-	}
-	catch (e) {
+	} catch (e) {
 		res.status(500).send()
-	}	
+	}
 })
-
 
 router.post('/user/recover/:token', async (req, res) => {
 	const { password } = req.body
@@ -315,9 +313,9 @@ router.post('/user/recover/:token', async (req, res) => {
 
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_EMAIL_VERIFICATION)
-		if(!decoded) { 
+		if (!decoded) {
 			return res.status(404).send({
-				error: 'არასწორი ტოკენი'
+				error: 'არასწორი ტოკენი',
 			})
 		}
 		const user = await User.findOne({
@@ -330,38 +328,45 @@ router.post('/user/recover/:token', async (req, res) => {
 			})
 		}
 		user.password = password
-		await user.save()
-			.then(() => {
-				res.status(200).send({
-					message: 'პაროლი წარმატებით შეიცვალა'
-				})
-			}
-			)
-
-	}
-	catch (e) {
+		await user.save().then(() => {
+			res.status(200).send({
+				message: 'პაროლი წარმატებით შეიცვალა',
+			})
+		})
+	} catch (e) {
 		res.status(500).send()
 	}
-
-
 })
-
 
 //update user
 
 router.post('/user/update', auth, async (req, res) => {
-	const {gender, age, location, about, newPassword} = req.body
-	try {
-		const user = await User.findByIdAndUpdate(req.user._id, {
-			gender,
-			age,
-			location,
-			about,
-			password: newPassword
-		})
-		res.status(200).send(user)
-	} catch (e) {
-		res.status(500).send()
+	const { gender, age, location, about, newPassword } = req.body
+	if (newPassword === '' || newPassword === undefined || newPassword === null) {
+		try {
+			const user = await User.findByIdAndUpdate(req.user._id, {
+				gender,
+				age,
+				location,
+				about,
+			})
+			res.status(200).send(user)
+		} catch (e) {
+			res.status(500).send()
+		}
+	} else {
+		try {
+			const user = await User.findByIdAndUpdate(req.user._id, {
+				gender,
+				age,
+				location,
+				about,
+				password: newPassword,
+			})
+			res.status(200).send(user)
+		} catch (e) {
+			res.status(500).send()
+		}
 	}
 })
 
