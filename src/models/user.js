@@ -11,7 +11,8 @@ const userSchema = new mongoose.Schema({
 	},
 	picture: {
 		type: String,
-		trim: true
+		trim: true,
+		default: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'
 	},
 	gender:{
 		type: String,

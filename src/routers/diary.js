@@ -263,7 +263,8 @@ router.delete('/diary/:diaryid/comment/:commentid', auth, async (req, res) => {
 			return res.status(404).send()
 		}
 		const comments = diary.comments
-		const comment = comments.find((c) => c.id === req.params.commentid)
+		const comment = comments.find((c) => c.commentId === req.params.commentid)
+
 		if (req.user.username.toLowerCase() !== comment.owner.toLowerCase()) {
 			return res.status(401).send({
 				error: 'You are not authorized to update this diary',
@@ -272,10 +273,12 @@ router.delete('/diary/:diaryid/comment/:commentid', auth, async (req, res) => {
 		if (!comment) {
 			return res.status(404).send()
 		}
-		const index = diary.comments.indexOf(comment)
-		diary.comments.splice(index, 1)
+		const filtereedComments = diary.comments.filter(
+			(comment) => comment.commentId !== req.params.commentid
+		)
+		diary.comments = filtereedComments
 		await diary.save()
-		res.send(diary)
+		res.status(200).send('comment deleted')
 	} catch (e) {
 		res.status(400).send(e)
 	}
