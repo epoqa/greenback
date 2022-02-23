@@ -342,7 +342,9 @@ router.post('/user/recover/:token', async (req, res) => {
 
 router.post('/user/update', auth, async (req, res) => {
 	const { gender, age, location, about, newPassword } = req.body
-	if (newPassword === '' || newPassword === undefined || newPassword === null) {
+	const password = newPassword
+	if (password === '' || password === undefined || password === null) {
+		console.log('NO Pass')
 		try {
 			const user = await User.findByIdAndUpdate(req.user._id, {
 				gender,
@@ -355,13 +357,14 @@ router.post('/user/update', auth, async (req, res) => {
 			res.status(500).send()
 		}
 	} else {
+		const hasshed = await bcrypt.hash(password, 8)
 		try {
 			const user = await User.findByIdAndUpdate(req.user._id, {
 				gender,
 				age,
 				location,
 				about,
-				password: newPassword,
+				password: hasshed,
 			})
 			res.status(200).send(user)
 		} catch (e) {
