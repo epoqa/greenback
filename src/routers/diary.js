@@ -346,22 +346,32 @@ router.put('/diary/dislike/:id', auth, async (req, res) => {
 	}
 })
 
-router.post('/diary/authorcomment', auth, (req, res) => {
+router.post('/diary/authorcomment', auth, async (req, res) => {
 	const authorComment = req.body.authorComment
 	const diaryId = req.body.diaryId
-	Diary.findOne({
-		id: diaryId,
-	}).then((diary) => {
-		if (req.user === diary.owner) {
-			diary.authorComment = authorComment
-			diary.save()
-			res.send(diary)
-		} else {
-			res.status(400).send({
+	try {
+		const diary = await Diary.findOne({
+			id: diaryId,
+		})
+		if (!diary) {
+			return res.status(404).send()
+		}
+		if(req.user.username !== diary.owner){
+			return res.status(401).send({
 				error: 'You are not authorized to update this diary',
 			})
 		}
-	})
+		diary.authorComment = authorComment
+		await diary.save()
+		res.send(diary)
+
+	} catch (e) {
+		res.status(400).send(e)
+	}
+	
+
+
+
 })
 
 module.exports = router
