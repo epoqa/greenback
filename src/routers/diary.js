@@ -346,4 +346,22 @@ router.put('/diary/dislike/:id', auth, async (req, res) => {
 	}
 })
 
+router.post('/diary/authorcomment', auth, (req, res) => {
+	const authorComment = req.body.authorComment
+	const diaryId = req.body.diaryId
+	Diary.findOne({
+		id: diaryId,
+	}).then((diary) => {
+		if (req.user === diary.owner) {
+			diary.authorComment = authorComment
+			diary.save()
+			res.send(diary)
+		} else {
+			res.status(400).send({
+				error: 'You are not authorized to update this diary',
+			})
+		}
+	})
+})
+
 module.exports = router

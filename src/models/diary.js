@@ -6,6 +6,10 @@ const Diary = mongoose.model('Diary', {
 		required: true,
 		trim: true,
 	},
+	authorComment:{
+		type: String,
+		trim: true,		
+	},
 	likes: [
 		{
 			type: String,
