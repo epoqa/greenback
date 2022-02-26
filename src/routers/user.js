@@ -373,4 +373,16 @@ router.post('/user/update', auth, async (req, res) => {
 	}
 })
 
+router.post('/user/update/picture', auth, async (req, res) => {
+	try {
+		const { picURL } = req.body
+		const user = await User.findByIdAndUpdate(req.user._id, {
+			picture: picURL,
+		})
+		res.status(200).send('nice')
+	} catch (e) {
+		res.status(500).send(e)
+	}
+})
+
 module.exports = router
