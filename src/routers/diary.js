@@ -198,10 +198,14 @@ router.put('/diary/comment/:id', auth, async (req, res) => {
 		if (!diary) {
 			return res.status(404).send()
 		}
+		const user = await User.findOne({
+			username: req.user.username.toLowerCase(),
+		})
 		diary.comments.push({
 			comment: req.body.comment,
 			owner: req.user.username,
 			commentId: req.body.commentId,
+			picture: user.picture,
 		})
 		await diary.save()
 		res.send(diary)

@@ -105,6 +105,7 @@ const Diary = mongoose.model('Diary', {
 			owner: String,
 			comment: String,
 			commentId: String,
+			picture: String,
 			createdAt: {
 				type: Date,
 				default: Date.now,
